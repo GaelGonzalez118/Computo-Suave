@@ -52,3 +52,22 @@ class Capa:
         # Aplicar funcion de activacion
         salida = self.activacion(self.z)
         return salida
+
+    def backpropagation(self, error_salida, tasa_aprendizaje=0.01):
+        # Calcular el gradiente de la capa
+        delta = error_salida * self.derivada(self.z)
+        
+        # Calcular los gradientes
+        gradientes_pesos = np.dot(self.entrada.T, delta)
+        
+        # Calcular el error para la capa anterior
+        error_hacia_atras = np.dot(delta, self.pesos.T)
+        
+        if self.usa_bias:
+            error_hacia_atras = error_hacia_atras[:, :-1]
+            
+        # Actualizar los pesos de la capa
+        self.pesos -= tasa_aprendizaje * gradientes_pesos
+        
+        return error_hacia_atras
+
