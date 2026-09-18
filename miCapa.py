@@ -71,3 +71,35 @@ class Capa:
         
         return error_hacia_atras
 
+class RedNeuronal:
+    def __init__(self):
+        self.capas = []
+        
+    def agregar_capa(self, capa):
+        self.capas.append(capa)
+        
+    def predecir(self, x):
+        # FEEDFORWARD
+        entrada_actual = x
+        for capa in self.capas:
+            entrada_actual = capa.feedforward(entrada_actual)
+        return entrada_actual
+        
+    def entrenar(self, trainX, trainT, epocas=1000, tol=1e-5, tasa_aprendizaje=0.01):
+        for epoca in range(epocas):
+            # YH = feedforward (trainX)
+            prediccion = self.predecir(trainX)
+            
+            # loss = Funcion Costo (T, YH) - Usando MSE
+            loss = np.mean(np.square(trainT - prediccion))
+            
+            if loss <= tol:
+                print(f"Se cumplio la tolerancia en la epoca {epoca}")
+                break
+                
+            # Calcular error base para iniciar Backpropagation
+            error = prediccion - trainT
+            
+            # Actualizar pesos con backpropagation
+            for capa in reversed(self.capas):
+                error = capa.backpropagation(error, tasa_aprendizaje)
