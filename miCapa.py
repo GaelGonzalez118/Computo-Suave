@@ -29,12 +29,16 @@ class Capa:
         self.usa_bias = usa_bias
         
         # Funcion de activacion y derivada
-        if activacion_nombre.lower() == 'relu':
+        activacion_nombre = activacion_nombre.lower()
+        if activacion_nombre == 'relu':
             self.activacion = relu
-        elif activacion_nombre.lower() == 'sigmoid':
+            self.derivada = relu_derivada
+        elif activacion_nombre == 'sigmoid':
             self.activacion = sigmoid
-        elif activacion_nombre.lower() == 'softmax':
+            self.derivada = sigmoid_derivada
+        elif activacion_nombre == 'softmax':
             self.activacion = softmax
+            self.derivada = softmax_derivada
         else:
             raise ValueError("Activacion no soportada")
 
