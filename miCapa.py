@@ -100,7 +100,8 @@ class RedNeuronal:
             entrada_actual = capa.feedforward(entrada_actual)
         return entrada_actual
         
-    def entrenar(self, trainX, trainT, epocas=1000, tol=1e-5, tasa_aprendizaje=0.01):
+    def entrenar(self, trainX, trainT, epocas=1000, tol=1e-5, tasa_aprendizaje=0.01, mostrar_cada=500):
+        # para epoca = 1 hasta epoca = epocas
         for epoca in range(epocas):
             # YH = feedforward (trainX)
             prediccion = self.predecir(trainX)
@@ -108,13 +109,34 @@ class RedNeuronal:
             # loss = Funcion Costo (T, YH) - Usando MSE
             loss = np.mean(np.square(trainT - prediccion))
             
+            # Mostrar el progreso
+            if epoca % mostrar_cada == 0:
+                print(f"Época {epoca} | Error (Loss): {loss:.6f}")
+            
+            # si loss <= tol entonces: salir
             if loss <= tol:
-                print(f"Se cumplio la tolerancia en la epoca {epoca}")
+                print(f" Se cumplió la tolerancia en la época {epoca} con un error de {loss:.6f}")
                 break
                 
-            # Calcular error base para iniciar Backpropagation
+            # Calculamos el error base para iniciar Backpropagation
             error = prediccion - trainT
             
-            # Actualizar pesos con backpropagation
+            # Actualizar pesos usando: backpropagation
             for capa in reversed(self.capas):
-                error = capa.backpropagation(error, tasa_aprendizaje)
+                error = capa.backpropagation(error, tasa_aprendizaje)                
+
+X = np.ones((3, 2)) * 5
+y = np.zeros((3, 2))
+
+mi_red = RedNeuronal()
+mi_red.agregar_capa(Capa(n_entradas=2, n_neuronas=4, activacion_nombre='relu', usa_bias=True))
+mi_red.agregar_capa(Capa(n_entradas=4, n_neuronas=2, activacion_nombre='sigmoid', usa_bias=True))
+
+print("--- Predicción inicial ---")
+print(mi_red.predecir(X))
+
+print("\nIniciando entrenamiento...")
+mi_red.entrenar(X, y, epocas=3000, tol=1e-5, tasa_aprendizaje=0.05, mostrar_cada=500)
+
+print("\n--- Predicción final ---")
+print(mi_red.predecir(X))
